@@ -14,10 +14,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 
-Route::get('/upload', [ExcelImportController::class, 'showUploadForm'])->name('excel.uploadform');
+Route::get('/', [ExcelImportController::class, 'showUploadForm'])->name('excel.uploadform');
 Route::post('/import', [ExcelImportController::class, 'import'])->name('excel.import');

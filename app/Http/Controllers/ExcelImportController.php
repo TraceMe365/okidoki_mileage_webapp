@@ -7,13 +7,16 @@ use App\Imports\MoviesImport;
 use App\Imports\VehicleImport;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\Mileage;
 use Carbon\Carbon;
+use Exception;
+
 class ExcelImportController extends Controller
 {
     protected  $wialonController;
     public function __construct(WialonController $wialonController)
     {
-        set_time_limit(300);
+        set_time_limit(0);
         $this->wialonController = $wialonController;
     }
     public function showUploadForm()
@@ -31,43 +34,83 @@ class ExcelImportController extends Controller
         $fileNameWithExtension = $file->getClientOriginalName();
         $array = Excel::toArray(new VehicleImport, $file);
         $newArray = [];
+        // Existing Booking Ids
+        $booking_numbers = Mileage::select("booking_id")->get()->toArray();
+        $booking_ids = array_column($booking_numbers,"booking_id");
         foreach ($array[0] as $firstIndex => $record) {
             if ($firstIndex > 0) {
-                // $newArray[$firstIndex] = $newArray[$firstIndex] ?? ['unit' => null, 'in' => null, 'out' => null];
-                foreach ($record as $col => $row) {
-                    if ($col == 0 && !empty($row)) {
-                        $newArray[$firstIndex]['booking'] = $row;
-                    } 
-                    else if ($col == 1 && !empty($row)) {
-                        $newArray[$firstIndex]['unit'] = $row;
-                    }
-                    else if ($col == 2 && !empty($row)) {
-                        // print_r($row." , ".$this->getTimestamp($row));die();
-                        $newArray[$firstIndex]['in'] = $this->getTimestamp($row);
-                    }
-                    else if ($col == 3 && !empty($row)) {
-                        $newArray[$firstIndex]['out'] = $this->getTimestamp($row);
+                if(isset($record[0]) && !in_array($record[0], $booking_ids)){
+                    foreach ($record as $col => $row) {
+                        if ($col == 0 && !empty($row)) {
+                            $newArray[$firstIndex]['booking'] = $row;
+                        } 
+                        else if ($col == 1 && !empty($row)) {
+                            $newArray[$firstIndex]['unit'] = $row;
+                        }
+                        else if ($col == 2 && !empty($row)) {
+                            $newArray[$firstIndex]['in'] = $this->getTimestamp($row);
+                        }
+                        else if ($col == 3 && !empty($row)) {
+                            $newArray[$firstIndex]['out'] = $this->getTimestamp($row);
+                        }
                     }
                 }
             }
         }
-
+        // Get Ids
         $this->wialonController->getSessionEID();
         $units = $this->wialonController->getUnits();
         foreach($newArray as &$element){
             foreach($units['items'] as $unit){
-                if($this->stringsEqual($unit["nm"],$element['unit'])){
-                    $element['id'] = $unit['id'];
+                try {
+                    if(isset($unit,$element['unit'])){
+                        if($this->stringsEqual($unit["nm"],$element['unit'])){
+                            $element['id'] = $unit['id'];
+                        }
+                    }
+                } catch (Exception $e) {
+                    return response()->json(['message'=>$e->getMessage(),'line'=>$e->getLine()]);
                 }
             }
         }
 
-        $this->wialonController->getSessionEID();
-        $this->wialonController->setTimeZone();
+        // Authenticate
+        $this->auth();
+        // Get Mileage
         foreach($newArray as $key=>&$vehicle){
-            $this->wialonController->executeReport($vehicle['id'],$vehicle['in'],$vehicle['out']);
-            $response = $this->wialonController->getRecords();
-            $vehicle['distance'] = $response[0]['c'][0];
+            if(isset($vehicle['id'],$vehicle['in'],$vehicle['out'])){
+                $this->wialonController->executeReport($vehicle['id'],$vehicle['in'],$vehicle['out']);
+                $response = $this->wialonController->getRecords();
+                if(isset($response[0]['c'][0])){
+                    $vehicle['distance'] = $response[0]['c'][0];
+                }
+                else if(isset($response['error'])){
+                    $this->auth();
+                    $this->wialonController->executeReport($vehicle['id'],$vehicle['in'],$vehicle['out']);
+                    $response = $this->wialonController->getRecords();
+                    if(isset($response[0]['c'][0])){
+                        $vehicle['distance'] = $response[0]['c'][0];
+                    }
+                    else{
+                        $vehicle['distance'] = "N/A";
+                    }
+                }
+                else{
+                    $vehicle['distance'] = "N/A";
+                }
+            }
+            else{
+                $vehicle['distance'] = "N/A";
+            }
+            // Add to DB
+            Mileage::create([
+                'booking_id'   => $vehicle['booking']??null,
+                'vehicle_id'   => $vehicle['id']??null,
+                'vehicle_name' => $vehicle['unit']??null,
+                'from_time'    => $array[0][$key][2]??null,
+                'to_time'      => $array[0][$key][3]??null,
+                'mileage'      => $vehicle['distance']??null
+            ]);
         }
 
         foreach($array[0] as $column => &$row){
@@ -80,6 +123,12 @@ class ExcelImportController extends Controller
         }
         $fileName = pathinfo($fileNameWithExtension, PATHINFO_FILENAME);
         return Excel::download(new ArrayExport($array), $fileName.'_distance.xlsx');
+    }
+
+    public function auth()
+    {
+        $this->wialonController->getSessionEID();
+        $this->wialonController->setTimeZone();
     }
 
     public function getTimestamp($excelDate)
