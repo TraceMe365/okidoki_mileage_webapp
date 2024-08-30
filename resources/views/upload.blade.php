@@ -9,14 +9,30 @@
 </head>
 <body>
 <div class="container mt-5">
-    <h2>Upload Excel File</h2>
-    <form action="{{ route('excel.import') }}" method="POST" enctype="multipart/form-data">
-        @csrf
-        <div class="mb-3">
-            <input class="form-control" type="file" name="file">
+    <div class="card mb-4   ">
+        <div class="card-body">
+        <div class="card-title"><h2>Upload Excel File For Mileage</h2></div>
+        <form action="{{ route('excel.import') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <div class="mb-3">
+                <input class="form-control" type="file" name="file">
+            </div>
+            <button type="submit" class="btn btn-primary">Import</button>
+        </form>
         </div>
-        <button type="submit" class="btn btn-primary">Import</button>
-    </form>
+    </div>
+    <div class="card">
+        <div class="card-body">
+        <div class="card-title"><h2>Upload Excel File For Distance</h2></div>
+        <form action="{{ route('distance.import') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <div class="mb-3">
+                <input class="form-control" type="file" name="file">
+            </div>
+            <button type="submit" class="btn btn-primary">Import</button>
+        </form>
+        </div>
+    </div>
 </div>
 
 </body>

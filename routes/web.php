@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DistanceController;
 use App\Http\Controllers\ExcelImportController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,3 +22,4 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [ExcelImportController::class, 'showUploadForm'])->name('excel.uploadform');
 Route::post('/import', [ExcelImportController::class, 'import'])->name('excel.import');
+Route::post('/distance', [DistanceController::class, 'import'])->name('distance.import');
