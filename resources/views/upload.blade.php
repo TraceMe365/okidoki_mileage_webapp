@@ -33,6 +33,18 @@
         </form>
         </div>
     </div>
+    <div class="card mt-4">
+        <div class="card-body">
+        <div class="card-title"><h2>Upload Excel File For Distance (Multiple) </h2></div>
+        <form action="{{ route('distance.import-multiple') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <div class="mb-3">
+                <input class="form-control" type="file" name="file">
+            </div>
+            <button type="submit" class="btn btn-primary">Import</button>
+        </form>
+        </div>
+    </div>
 </div>
 
 </body>

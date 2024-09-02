@@ -23,3 +23,4 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [ExcelImportController::class, 'showUploadForm'])->name('excel.uploadform');
 Route::post('/import', [ExcelImportController::class, 'import'])->name('excel.import');
 Route::post('/distance', [DistanceController::class, 'import'])->name('distance.import');
+Route::post('/distanceVia', [DistanceController::class, 'importVia'])->name('distance.import-multiple');
