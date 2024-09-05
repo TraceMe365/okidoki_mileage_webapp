@@ -67,7 +67,6 @@ class DistanceController extends Controller
 
         $booking_numbers = DistanceMultiple::select("booking_id")->get()->toArray();
         $booking_ids = array_column($booking_numbers,"booking_id");
-
         foreach ($array[0] as $firstIndex => $record) {
             if($firstIndex>0){
                 if(isset($record[0]) && !in_array($record[0], $booking_ids)){
@@ -138,11 +137,22 @@ class DistanceController extends Controller
                             'distance' => $distanceString,
                         ]);
                     }
+                    else{
+                        DistanceMultiple::create([
+                            'booking_id' => $record[0],
+                            'pickup_latitude' => $pickupLat,
+                            'pickup_longitude' => $pickupLon,
+                            'via_locations' => $via_string,
+                            'delivery_latitude' => $deliverLat,
+                            'delivery_longitude' => $deliverLon,
+                            'distance' => 'N/A',
+                        ]);
+                    }
                 }
             }
         }
 
-        return $array;
+        echo json_encode(array("Status"=>"Complete"));
     }
 
     function getDistanceFromGoogle($fromLat,$fromLon,$toLat,$toLon)
