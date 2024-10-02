@@ -19,6 +19,7 @@ class DistanceMultiple extends Model
         'delivery_latitude',
         'delivery_longitude',
         'distance',
+        'time',
     ];
 
 }

@@ -118,15 +118,19 @@ class DistanceController extends Controller
                     
                     $response = $this->getDistanceFromGoogleMultiple($pickupLat,$pickupLon,$deliverLat,$deliverLon,$via_string);
                     if(isset($response['routes'][0]['legs'])){
-                        $legs = $response['routes'][0]['legs'];
+                        $legs     = $response['routes'][0]['legs'];
                         $distance = 0;
+                        $time     = 0;
                         foreach($legs as $leg){
                             $distance += $leg['distance']['value'];
+                            $time += $leg['duration']['value'];
                         }
+                        // print_r($time);
+                        // die();
                         $distance = $distance/1000;
                         $roundedDistance = round($distance, 1);
                         $distanceString = (string)$roundedDistance.' km';
-
+                        $timeInHuman = $this->secondsToTime($time);
                         DistanceMultiple::create([
                             'booking_id' => $record[0],
                             'pickup_latitude' => $pickupLat,
@@ -135,6 +139,7 @@ class DistanceController extends Controller
                             'delivery_latitude' => $deliverLat,
                             'delivery_longitude' => $deliverLon,
                             'distance' => $distanceString,
+                            'time' => $timeInHuman
                         ]);
                     }
                     else{
@@ -146,6 +151,7 @@ class DistanceController extends Controller
                             'delivery_latitude' => $deliverLat,
                             'delivery_longitude' => $deliverLon,
                             'distance' => 'N/A',
+                            'time' => 'N/A',
                         ]);
                     }
                 }
@@ -191,6 +197,13 @@ class DistanceController extends Controller
         $response = curl_exec($curl);
         curl_close($curl);
         return json_decode($response,true);
+    }
+
+    function secondsToTime($seconds) {
+        $hours = floor($seconds / 3600);
+        $minutes = floor(($seconds % 3600) / 60);
+        $seconds = $seconds % 60;
+        return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
     }
 
 }
