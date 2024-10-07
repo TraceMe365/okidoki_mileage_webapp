@@ -24,3 +24,15 @@ Route::get('/', [ExcelImportController::class, 'showUploadForm'])->name('excel.u
 Route::post('/import', [ExcelImportController::class, 'import'])->name('excel.import');
 Route::post('/distance', [DistanceController::class, 'import'])->name('distance.import');
 Route::post('/distanceVia', [DistanceController::class, 'importVia'])->name('distance.import-multiple');
+
+Route::get('/mileage', function () {
+    return view('mileage');
+})->name('mileage');
+
+Route::get('/distancepage', function () {
+    return view('distancepage');
+})->name('distancepage');
+
+Route::get('/multipledistancepage', function () {
+    return view('multipledistancepage');
+})->name('multipledistancepage');

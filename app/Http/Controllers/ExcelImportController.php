@@ -21,7 +21,8 @@ class ExcelImportController extends Controller
     }
     public function showUploadForm()
     {
-        return view('upload');
+        // return view('upload');
+        return view('layout/home');
     }
 
     public function import(Request $request)
