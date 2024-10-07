@@ -15,18 +15,40 @@
         </ul>
     </nav>
 </div>
-<div class="card mb-4">
 <div class="card mt-4">
         <div class="card-body">
-        <div class="card-title"><h2>Upload Excel File For Distance (Multiple) </h2></div>
-        <form action="{{ route('distance.import-multiple') }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            <div class="mb-3">
-                <input class="form-control" type="file" name="file">
+            <div class="card-title"><h2>Upload Excel File For Distance (Multiple) </h2></div>
+                <form action="{{ route('distance.import-multiple') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="mb-3">
+                        <input class="form-control" type="file" name="file">
+                    </div>
+                    <div class="row">
+                        <div class="col-3">
+                            <button type="submit" class="btn btn-primary">Import</button>
+                        </div>
+                        <div class="col-3">
+                            <button class="btn btn-danger" onclick="deleteData()" type="button">
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <button type="submit" class="btn btn-primary">Import</button>
-        </form>
         </div>
-    </div>
-</div>
+<script>
+    function deleteData(){
+        $.ajax({
+            url: "{{ route('clear.distancem') }}",
+            type: "POST",
+            data: $(this).serialize(),
+            success: function(response) {
+                toastr.success('Cleared past records');
+            },
+            error: function(xhr) {
+                console.log(xhr)
+            }
+        });
+    }
+</script>
 @endsection

@@ -23,8 +23,32 @@
         <div class="mb-3">
             <input class="form-control" type="file" name="file">
         </div>
-        <button type="submit" class="btn btn-primary">Import</button>
+        <div class="row">
+            <div class="col-3">
+            <button type="submit" class="btn btn-primary">Import</button>
+            </div>
+            <div class="col-3">
+                <button class="btn btn-danger" onclick="deleteData()" type="button">
+                    Clear
+                </button>
+            </div>
+        </div>
     </form>
     </div>
 </div>
+<script>
+    function deleteData(){
+        $.ajax({
+            url: "{{ route('clear.distance') }}",
+            type: "POST",
+            data: $(this).serialize(),
+            success: function(response) {
+                toastr.success('Cleared past records');
+            },
+            error: function(xhr) {
+                console.log(xhr)
+            }
+        });
+    }
+</script>
 @endsection

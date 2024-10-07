@@ -24,6 +24,9 @@ Route::get('/', [ExcelImportController::class, 'showUploadForm'])->name('excel.u
 Route::post('/import', [ExcelImportController::class, 'import'])->name('excel.import');
 Route::post('/distance', [DistanceController::class, 'import'])->name('distance.import');
 Route::post('/distanceVia', [DistanceController::class, 'importVia'])->name('distance.import-multiple');
+Route::post('/clearmileage', [DistanceController::class, 'clearMileageTable'])->name('clear.mileage');
+Route::post('/cleardistancemul', [DistanceController::class, 'clearMultipleDistanceTable'])->name('clear.distancem');
+Route::post('/cleardistance', [DistanceController::class, 'clearDistanceTable'])->name('clear.distance');
 
 Route::get('/mileage', function () {
     return view('mileage');

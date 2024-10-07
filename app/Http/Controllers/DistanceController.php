@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Distance;
 use App\Models\DistanceMultiple;
+use App\Models\Mileage;
 
 class DistanceController extends Controller
 {
@@ -204,6 +205,18 @@ class DistanceController extends Controller
         $minutes = floor(($seconds % 3600) / 60);
         $seconds = $seconds % 60;
         return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+    }
+
+    function clearMileageTable(){
+        Mileage::truncate();
+    }
+
+    function clearDistanceTable(){
+        Distance::truncate();
+    }
+
+    function clearMultipleDistanceTable(){
+        DistanceMultiple::truncate();
     }
 
 }
