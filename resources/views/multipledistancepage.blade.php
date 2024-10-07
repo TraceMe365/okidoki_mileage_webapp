@@ -21,7 +21,14 @@
                 <form action="{{ route('distance.import-multiple') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="mb-3">
-                        <input class="form-control" type="file" name="file">
+                    <div class="row">
+                        <div class="col-4">
+                            <input class="form-control" type="file" name="file">
+                        </div>
+                        <div class="col-4">
+                            <a href="{{ route('download.distancem') }}" class="btn btn-success mb-2">Download Distance</a>
+                        </div>
+                    </div>
                     </div>
                     <div class="row">
                         <div class="col-3">
@@ -35,8 +42,11 @@
                     </div>
                 </form>
             </div>
-        </div>
+        </div>    
 <script>
+    @if (session('success'))
+        toastr.success("{{ session('success') }}");
+    @endif
     function deleteData(){
         $.ajax({
             url: "{{ route('clear.distancem') }}",

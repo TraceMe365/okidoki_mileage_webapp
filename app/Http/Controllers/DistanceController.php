@@ -56,6 +56,8 @@ class DistanceController extends Controller
                 }
             }
         }
+        session()->flash('success', 'File imported successfully!');
+        return redirect()->back(); 
     }
 
     public function importVia(Request $request)
@@ -126,8 +128,6 @@ class DistanceController extends Controller
                             $distance += $leg['distance']['value'];
                             $time += $leg['duration']['value'];
                         }
-                        // print_r($time);
-                        // die();
                         $distance = $distance/1000;
                         $roundedDistance = round($distance, 1);
                         $distanceString = (string)$roundedDistance.' km';
@@ -158,8 +158,8 @@ class DistanceController extends Controller
                 }
             }
         }
-
-        echo json_encode(array("Status"=>"Complete"));
+        session()->flash('success', 'File imported successfully!');
+        return redirect()->back(); 
     }
 
     function getDistanceFromGoogle($fromLat,$fromLon,$toLat,$toLon)

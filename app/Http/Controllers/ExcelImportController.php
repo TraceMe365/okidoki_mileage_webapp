@@ -122,8 +122,10 @@ class ExcelImportController extends Controller
                 $row[]= $newArray[$column]['distance'];
             }
         }
-        $fileName = pathinfo($fileNameWithExtension, PATHINFO_FILENAME);
-        return Excel::download(new ArrayExport($array), $fileName.'_distance.xlsx');
+        // $fileName = pathinfo($fileNameWithExtension, PATHINFO_FILENAME);
+        // return Excel::download(new ArrayExport($array), $fileName.'_distance.xlsx');
+        session()->flash('success', 'File imported successfully!');
+        return redirect()->back();
     }
 
     public function auth()

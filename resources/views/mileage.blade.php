@@ -21,7 +21,14 @@
     <form action="{{ route('excel.import') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="mb-3">
-            <input class="form-control" type="file" name="file">
+            <div class="row">
+                <div class="col-6">
+                    <input class="form-control" type="file" name="file">
+                </div>
+                <div class="col-3">
+                    <a href="{{ route('download.mileage') }}" class="btn btn-success mb-2">Download Mileage</a>
+                </div>
+            </div>
         </div>
         <div class="row">
             <div class="col-3">
