@@ -5,8 +5,9 @@ namespace App\Exports;
 use App\Models\DistanceMultiple;
 use Illuminate\Database\Eloquent\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class DistanceMultipleExport implements FromCollection
+class DistanceMultipleExport implements FromCollection,WithHeadings
 {
     /**
     * @return \Illuminate\Support\Collection
@@ -23,11 +24,11 @@ class DistanceMultipleExport implements FromCollection
             'distance',
             'time'
         )->get();
-    
+
         if ($data->isEmpty()) {
             return new Collection([]);
         }
-    
+
         return $data;
     }
 

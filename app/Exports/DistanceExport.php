@@ -4,8 +4,9 @@ namespace App\Exports;
 
 use App\Models\Distance;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class DistanceExport implements FromCollection
+class DistanceExport implements FromCollection,WithHeadings
 {
     /**
     * @return \Illuminate\Support\Collection
@@ -14,7 +15,7 @@ class DistanceExport implements FromCollection
     {
         return Distance::select('booking_number', 'pickup_latitude', 'pickup_longitude', 'dropoff_latitude','dropoff_longitude','distance')->get();
     }
-    
+
     /**
      * Define the headings for the Excel sheet.
      *
