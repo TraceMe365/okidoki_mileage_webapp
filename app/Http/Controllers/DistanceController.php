@@ -11,11 +11,12 @@ use App\Models\Mileage;
 
 class DistanceController extends Controller
 {
-    protected $google_maps_token = "AIzaSyC0Nh39yAtFIg-x83gBbRCIfOOE_N8Qdl0";
+    protected $google_maps_token;
 
     public function __construct()
     {
         set_time_limit(0);
+        $this->google_maps_token = env('GOOGLE_MAP_TOKEN');
     }
 
     public function import(Request $request)
