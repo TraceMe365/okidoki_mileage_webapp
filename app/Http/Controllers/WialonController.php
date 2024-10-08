@@ -6,9 +6,14 @@ use Illuminate\Http\Request;
 
 class WialonController extends Controller
 {
-    protected $token = '97735d41e01c3ccb98e880a8dc0b6ad7F81F3CAE4B0ABB81FB0EB9964D1A03E89993D64A';
+    protected $token;
 
     protected $eid;
+
+    public function __construct(){
+        $this->token = env('WIALON_TOKEN');
+    }
+
     public function setTimeZone()
     {
         $curl = curl_init();
